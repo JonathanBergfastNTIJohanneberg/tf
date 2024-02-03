@@ -1,0 +1,20 @@
+body {
+  font-family: 'Helvetica', sans-serif;
+  background-color: #f8f8f8;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+#navbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 3px solid green;
+  height: 100px; 
+}
+
+#navbar h1.titel {
+  margin: 0;
+}
