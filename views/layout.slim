@@ -1,9 +1,32 @@
+doctype html
 html lang="en"
   head
     meta charset="UTF-8"
     meta name="viewport" content="width=device-width, initial-scale=1.0"
-    link rel="stylesheet" href="style.css"
+    link rel="stylesheet" href="/css/style.css"
     title Athletico
-  body#wrapper  
-    nav#navbar 
-      h1.titel Atletico 
+    style 
+      | @import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
+
+  body
+    header.header-bar
+      h2.logo Athletico
+      .container
+        button.btn
+          span Menus
+          i.material-icons Public
+          ul.dropdown
+            li.active: a(href='#') Profile Information
+            li: a(href='#') Change Password
+            li: a(href='https://codepen.io/pro') Become <b>PRO</b>
+            li: a(href='#') Help
+            li: a(href='#') Log Out
+      .auth-buttons
+        a href="#" Register
+        a href="#" Login
+
+    script src="public/js/app.js"
+    script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    script src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+
+    == yield
