@@ -70,8 +70,8 @@ get('/showlogout') do
 end
 
 post("/users/new") do
- username= params[:username]
- password= params[:password]
+ username = params[:username]
+ password = params[:password]
  email= params[:email]
  password_confirm= params[:password_comfirm]
 

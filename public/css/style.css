@@ -14,12 +14,11 @@ body {
   color: #fff; /* Adjust the text color as needed */
 }
 
-.logo-container {
-  flex: 1;
-}
+
 
 h2.logo {
   margin: 0;
+  text-align: center;
 }
 
 .nav-container {
@@ -62,12 +61,7 @@ ul.dropdown-content li {
 }
 
 /* Add the provided dropdown menu styling */
-.container {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+
 
 .btn {
   outline: 0;
