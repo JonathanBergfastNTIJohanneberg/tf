@@ -3,8 +3,29 @@ require 'slim'
 require 'sqlite3'
 require 'bcrypt'
 require 'sinatra/reloader'
+require 'sinatra/flash'
 
 enable :sessions
+
+get('/') do
+  slim(:home)
+end
+
+get('/home') do 
+  slim(:home)
+end 
+
+get('/register') do 
+  slim(:register)
+end 
+
+get('/login') do 
+  slim(:login)
+end 
+
+get('/logout') do 
+  slim(:logout)
+end
 
 
 def connect_to_db(path)
@@ -21,23 +42,15 @@ def list
 
 end
 
-
-
-get('/showlogin') do
-  slim(:login)
-end
-
-
-
 post('/login') do
   username = params[:username]
   password = params[:password]
   email = params[:email]
   db = SQLite3::Database.new('db/ovning_urval.db')
   db.results_as_hash = true
-  result = db.execute("SELECT * FROM users WHERE user_name =? OR user_mail=? ",username,email).first
-  pwdigest= result["user_pwd"]
-  id= result["id"]
+  result = db.execute("SELECT * FROM user WHERE name =? email=? ",username,email).first
+  pwdigest= result["password"]
+  id= result["ID"]
 
   if BCrypt::Password.new(pwdigest) == password
     session[:id] = id
@@ -45,17 +58,9 @@ post('/login') do
   else
     "fel lösenord"
   end
-
-
 end
 
-
-get('/') do
-  slim(:register)
-end
-
-
-get('/todos') do 
+get('/home') do 
   id = session[:id].to_i
   db = SQLite3::Database.new('db/ovning_urval.db')
   db.results_as_hash = true
@@ -64,12 +69,7 @@ get('/todos') do
   slim(:"todos/index", locals:{todos:result})
 end
 
-
-get('/showlogout') do 
-    slim(:logout)
-end
-
-post("/users/new") do
+post("/") do
  username = params[:username]
  password = params[:password]
  email= params[:email]
@@ -78,7 +78,7 @@ post("/users/new") do
   if (password == password_confirm)
     password_digest= BCrypt::Password.create(password)
     db = SQLite3::Database.new('db/ovning_urval.db')
-    db.execute("INSERT INTO users (user_name,user_pwd,user_mail) VALUES(?,?,?)",username,password_digest,email)
+    db.execute("INSERT INTO user (name,password,email) VALUES(?,?,?)",username,password_digest,email)
     redirect('/')
 
   else
