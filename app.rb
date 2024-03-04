@@ -46,17 +46,25 @@ post('/login') do
   username = params[:username]
   password = params[:password]
   email = params[:email]
+  
   db = SQLite3::Database.new('db/ovning_urval.db')
   db.results_as_hash = true
-  result = db.execute("SELECT * FROM user WHERE name =? email=? ",username,email).first
-  pwdigest= result["password"]
-  id= result["ID"]
+  result = db.execute("SELECT * FROM user WHERE name = ? AND email = ?", username, email).first
 
-  if BCrypt::Password.new(pwdigest) == password
-    session[:id] = id
-    redirect('/todos')
+  puts "Resultat från databasen: #{result}"
+  
+  if result
+    pwdigest = result["password"]
+    puts "Pwdigest från databasen: #{pwdigest}" 
+
+    if BCrypt::Password.new(pwdigest) == password
+      session[:id] = result["ID"]
+      redirect('/todos')
+    else
+      "Fel lösenord"
+    end
   else
-    "fel lösenord"
+    "Användaren hittades inte"
   end
 end
 
