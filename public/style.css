@@ -146,7 +146,6 @@ h2.logo a {
 }
 
 .wrap {
-  background-image: url(img/section_image.jpg);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
@@ -154,9 +153,6 @@ h2.logo a {
   flex-direction: row;
   padding-top: 70px;
   padding-bottom: 70px;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
 }
 
 
@@ -249,29 +245,58 @@ h2.logo a {
 }
 
 .two {
-	background: url(img/gym_card.jpg);
+	background: url(img/diet.jpg);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center;
 }
 
 .three {
-	background: url(img/gym_card.jpg);
+	background: url(img/plans.jpg);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center;
 }
 
 .five {
-	background: url(img/gym_card.jpg);
+	background: url(img/anatamoy.jpg);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center;
 }
 
 .six {
-	background: url(img/gym_card.jpg);
+	background: url(img/designs.jpg);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center;
+}
+
+.wrapper {
+  height: 600px;
+  position: relative;
+  background-color: deepskyblue;
+  min-height: 50vh;
+}
+
+.custom-shape-divider-bottom-1709393195 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  z-index: 1;
+}
+
+
+.custom-shape-divider-bottom-1709393195 svg {
+  position: relative;
+  display: block;
+  width: calc(171% + 1.3px);
+  height: 180px;
+}
+
+.custom-shape-divider-bottom-1709393195 .shape-fill {
+  fill: #1B1010;
 }
