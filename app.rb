@@ -39,7 +39,6 @@ def list
  db.results_as_hash = true
  result = db.execute("SELECT name FROM Characters")
  return result
-
 end
 
 post('/login') do
@@ -49,32 +48,18 @@ post('/login') do
   
   db = SQLite3::Database.new('db/ovning_urval.db')
   db.results_as_hash = true
-  result = db.execute("SELECT * FROM user WHERE name = ? AND email = ?", username, email).first
+  result = db.execute("SELECT * FROM user WHERE name = ?", username).first
 
-  puts "Resultat från databasen: #{result}"
-  
-  if result
+    puts "Resultat från databasen: #{result}"
     pwdigest = result["password"]
     puts "Pwdigest från databasen: #{pwdigest}" 
 
     if BCrypt::Password.new(pwdigest) == password
       session[:id] = result["ID"]
-      redirect('/todos')
+      redirect('/home')
     else
       "Fel lösenord"
     end
-  else
-    "Användaren hittades inte"
-  end
-end
-
-get('/home') do 
-  id = session[:id].to_i
-  db = SQLite3::Database.new('db/ovning_urval.db')
-  db.results_as_hash = true
-  result = db.execute("SELECT name FROM Characters")
-  p   "alla todos från result #{result}"
-  slim(:"todos/index", locals:{todos:result})
 end
 
 post("/") do

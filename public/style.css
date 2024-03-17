@@ -47,7 +47,7 @@ h2.logo a {
   align-items: center;
   justify-content: space-between;
   background: #A9A9A9;
-  min-width: 260px;
+  min-width: 260px; 
   border: 0;
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -67,6 +67,7 @@ h2.logo a {
   top: calc(100% + 10px); 
   left: 0;
   background: #fff;
+  z-index: 1;
   width: 260px; 
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -274,9 +275,22 @@ h2.logo a {
 
 .wrapper {
   height: 600px;
+  margin-top: 5vh;
   position: relative;
-  background-color: deepskyblue;
   min-height: 50vh;
+  z-index: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url('https://i.pinimg.com/originals/2d/2b/1e/2d2b1e85756d0abb1a095cf377a4440e.gif');
+}
+
+
+svg {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  border-radius: 0px 52px 0px 52px;
 }
 
 .custom-shape-divider-bottom-1709393195 {
