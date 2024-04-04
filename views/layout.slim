@@ -23,12 +23,11 @@ html lang="en"
       h2.logo 
         a(href="/home") Athletico
       .auth-buttons
-        - if session[:id]
-          p #{session[:id]}!
+        - if session[:name]
+          p #{session[:name]}
           a href="/logout" Logout
         - else
           a href="/register" Register
-          a href="/login" Login
 
 
     script src="app.js"

@@ -24,24 +24,11 @@ get('/login') do
 end 
 
 get('/logout') do 
-  slim(:logout)
+  session.clear
+  slim(:home)
 end
 
-
-def connect_to_db(path)
-  db = SQLite3::Database.new(path)
-  db.results_as_hash = true
-  return db
- end
-
-def list
- db = SQLite3::Database.new('db/ovning_urval.db')
- db.results_as_hash = true
- result = db.execute("SELECT name FROM Characters")
- return result
-end
-
-post('/login') do
+post('/login_form') do
   username = params[:username]
   password = params[:password]
   email = params[:email]
@@ -50,32 +37,26 @@ post('/login') do
   db.results_as_hash = true
   result = db.execute("SELECT * FROM user WHERE name = ?", username).first
 
-    puts "Resultat från databasen: #{result}"
-    pwdigest = result["password"]
-    puts "Pwdigest från databasen: #{pwdigest}" 
-
-    if BCrypt::Password.new(pwdigest) == password
-      session[:id] = result["ID"]
-      redirect('/home')
-    else
-      "Fel lösenord"
-    end
+  if result && BCrypt::Password.new(result["password"]) == password
+    session[:name] = result["name"]
+    redirect('/home')
+  else
+    "Incorrect username or password"
+  end
 end
 
-post("/") do
- username = params[:username]
- password = params[:password]
- email= params[:email]
- password_confirm= params[:password_comfirm]
+post("/register_form") do
+  username = params[:username]
+  password = params[:password]
+  email= params[:email]
+  password_confirm= params[:password_confirm]
 
-  if (password == password_confirm)
-    password_digest= BCrypt::Password.create(password)
+  if password == password_confirm
+    password_digest = BCrypt::Password.create(password)
     db = SQLite3::Database.new('db/ovning_urval.db')
-    db.execute("INSERT INTO user (name,password,email) VALUES(?,?,?)",username,password_digest,email)
+    db.execute("INSERT INTO user (name, password, email) VALUES (?, ?, ?)", username, password_digest, email)
     redirect('/')
-
   else
-    "fel lösenord"
-    
+    "Passwords do not match"
   end
 end
