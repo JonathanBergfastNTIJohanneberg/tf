@@ -486,3 +486,7 @@ input{
     transform: translate3d(85px,0,0);
   }
 }
+
+.container_links{
+  padding: 0px;
+}

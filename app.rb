@@ -32,6 +32,14 @@ get('/exercises') do
   slim(:exercises)
 end 
 
+get('/diets') do 
+  slim(:diets)
+end 
+
+get('/plans') do 
+  slim(:plans)
+end 
+
 post('/login_form') do
   username = params[:username]
   password = params[:password]
@@ -62,6 +70,6 @@ post("/register_form") do
     session[:name] = username
     redirect('/home')
   else
-    "Passwords do not match"
+    slim(:register, locals: { error_message: "Lösenordet Matchar Inte" })
   end
 end

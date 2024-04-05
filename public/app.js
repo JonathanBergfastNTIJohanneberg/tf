@@ -19,3 +19,20 @@ document.addEventListener("DOMContentLoaded", function() {
       });
   });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.querySelector('input[name="password"]');
+    const confirmPasswordInput = document.querySelector('input[name="password_confirm"]');
+    const errorMessage = document.querySelector('.error-message');
+    const signUpButton = document.getElementById('signup_button');
+  
+    confirmPasswordInput.addEventListener('input', function() {
+      if (passwordInput.value !== confirmPasswordInput.value) {
+        errorMessage.style.display = 'block';
+        signUpButton.disabled = true;
+      } else {
+        errorMessage.style.display = 'none';
+        signUpButton.disabled = false;
+      }
+    });
+  });  
