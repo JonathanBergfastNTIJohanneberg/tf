@@ -28,6 +28,10 @@ get('/logout') do
   slim(:home)
 end
 
+get('/exercises') do 
+  slim(:exercises)
+end 
+
 post('/login_form') do
   username = params[:username]
   password = params[:password]
