@@ -1,36 +1,44 @@
-section#wrapper
-  svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none"
-    path fill="#eaeaea" fill-opacity="1" d="M0,64L48,85.3C96,107,192,149,288,170.7C384,192,480,192,576,181.3C672,171,768,149,864,160C960,171,1056,213,1152,197.3C1248,181,1344,107,1392,69.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-  
-.conatiner
-  .wrap
-    .box.one
-      .date
-        h4 Discover
-      h1 EXERCISES 
-      .poster.p1
-        h4 E
-    .box.two
-      .date
-        h4 Find
-      h1 DIETS
-      .poster.p2
-        h4 D
-    .box.three
-      .date
-        h4 Create
-      h1 PLANS
-      .poster.p3
-        h4 P
-    .box.five
-      .date
-        h4 Understand 
-      h1 MUSCLES 
-      .poster.p4
-        h4 M
-    .box.six
-      .date
-        h4 Construct
-      h1 DESIGNS
-      .poster.p5
-        h4 D
+.header
+  .inner-header.flex
+    .container
+      .wrap
+        .box.one
+          .date
+            h4 Discover
+          h1 EXERCISES 
+          .poster.p1
+            h4 E
+        .box.two
+          .date
+            h4 Find
+          h1 DIETS
+          .poster.p2
+            h4 D
+        .box.three
+          .date
+            h4 Create
+          h1 PLANS
+          .poster.p3
+            h4 P
+        .box.five
+          .date
+            h4 Understand 
+          h1 MUSCLES 
+          .poster.p4
+            h4 M
+        .box.six
+          .date
+            h4 Construct
+          h1 DESIGNS
+          .poster.p5
+            h4 D
+  div
+    svg.waves(xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto" height="200")
+      defs
+        path#gentle-wave(d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352")
+      g.parallax
+        use(xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7")
+        use(xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)")
+        use(xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)")
+        use(xlink:href="#gentle-wave" x="48" y="7" fill="#fff")
+
