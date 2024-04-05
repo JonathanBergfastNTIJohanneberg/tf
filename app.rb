@@ -48,14 +48,15 @@ end
 post("/register_form") do
   username = params[:username]
   password = params[:password]
-  email= params[:email]
-  password_confirm= params[:password_confirm]
+  email = params[:email]
+  password_confirm = params[:password_confirm]
 
   if password == password_confirm
     password_digest = BCrypt::Password.create(password)
     db = SQLite3::Database.new('db/ovning_urval.db')
     db.execute("INSERT INTO user (name, password, email) VALUES (?, ?, ?)", username, password_digest, email)
-    redirect('/')
+    session[:name] = username
+    redirect('/home')
   else
     "Passwords do not match"
   end
