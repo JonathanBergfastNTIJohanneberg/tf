@@ -490,3 +490,128 @@ input{
 .container_links{
   padding: 0px;
 }
+
+#diet_section {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  padding: 20px;
+  height: 70%;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#diet_section h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#diet_searchbar {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.diet_card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.diet_layout {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+.diet_layout h3 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+}
+
+.diet_layout p {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+
+
+
+#diet_1 {
+  display: block;
+  margin: 0 auto;
+  border-radius: 5px;
+  height: 300px;
+  background: url(img/designs.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+}
+
+#diet_2 {
+  display: block;
+  margin: 0 auto;
+  border-radius: 5px;
+  height: 300px;
+  background: url(img/designs.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+}
+
+#diet_3 {
+  display: block;
+  margin: 0 auto;
+  border-radius: 5px;
+  height: 300px;
+  background: url(img/designs.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+}
+
+#diet_4 {
+  display: block;
+  margin: 0 auto;
+  border-radius: 5px;
+  height: 300px;
+  background: url(img/designs.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+}
+
+#diet_5 {
+  display: block;
+  margin: 0 auto;
+  border-radius: 5px;
+  height: 300px;
+  background: url(img/designs.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+}
+
+.icon-heart {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  color: red;
+  cursor: pointer;
+  text-shadow: 0 0 0 black; /* Add a black text shadow to create an outline */
+  -webkit-text-stroke-width: 1px; /* Add a stroke to the text */
+  -webkit-text-stroke-color: black; /* Set the stroke color to black */
+  outline: none; /* Remove any default outline */
+}
+
+.icon-heart.clicked {
+  color: white;
+}

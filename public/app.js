@@ -35,4 +35,19 @@ document.addEventListener('DOMContentLoaded', function() {
         signUpButton.disabled = false;
       }
     });
-  });  
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const hearts = document.querySelectorAll('.icon-heart');
+  
+    hearts.forEach(heart => {
+      heart.addEventListener('click', function () {
+        if (heart.classList.contains('clicked')) {
+          heart.classList.remove('clicked');
+        } else {
+          heart.classList.add('clicked');
+        }
+      });
+    });
+});
+  

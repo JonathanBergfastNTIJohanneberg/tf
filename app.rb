@@ -7,6 +7,8 @@ require 'sinatra/flash'
 
 enable :sessions
 
+
+
 get('/') do
   slim(:home)
 end
@@ -17,10 +19,6 @@ end
 
 get('/register') do 
   slim(:register)
-end 
-
-get('/login') do 
-  slim(:login)
 end 
 
 get('/logout') do 
