@@ -491,185 +491,83 @@ input{
   padding: 0px;
 }
 
-#diet_section {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 70%;
-  padding: 20px;
-  height: 70%;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-#diet_section h1 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-#diet_searchbar {
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.diet_card {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-.diet_layout {
-  background: #fff;
-  padding: 20px;
+.container_diets_1 {
+  max-width: 400px;
+  margin: 50px auto;
+  background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-  position: relative;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.diet_layout h3 {
-  margin-top: 0;
-  font-size: 18px;
+.container_diets_1 form {
+  display: flex;
+  flex-direction: column;
+}
+
+.container_diets_1 label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.container_diets_1 input[type="text"] {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.container_diets_1 button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.container_diets_1 button:hover {
+  background-color: #45a049;
+}
+
+.title_diets{
+  color: black;
+}
+
+.container_diets_2 {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 1200px; /* Set a maximum width */
+  margin: 0 auto; /* Center the container horizontally */
+}
+
+.diet-card {
+  width: 300px; /* Set the initial width of each card */
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.diet-card h2.diet-name {
+  font-size: 20px;
+  margin-bottom: 10px;
   color: #333;
-  text-align: center;
 }
 
-.diet_layout p {
+.diet-card p.diet-info {
+  font-size: 16px;
   color: #666;
   margin-bottom: 10px;
 }
 
-
-
-
-#diet_1 {
-  display: block;
-  margin: 0 auto;
-  border-radius: 5px;
-  height: 300px;
-  background: url(img/designs.jpg);
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center;
-}
-
-#diet_2 {
-  display: block;
-  margin: 0 auto;
-  border-radius: 5px;
-  height: 300px;
-  background: url(img/designs.jpg);
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center;
-}
-
-#diet_3 {
-  display: block;
-  margin: 0 auto;
-  border-radius: 5px;
-  height: 300px;
-  background: url(img/designs.jpg);
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center;
-}
-
-#diet_4 {
-  display: block;
-  margin: 0 auto;
-  border-radius: 5px;
-  height: 300px;
-  background: url(img/designs.jpg);
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center;
-}
-
-#diet_5 {
-  display: block;
-  margin: 0 auto;
-  border-radius: 5px;
-  height: 300px;
-  background: url(img/designs.jpg);
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center;
-}
-
-.icon-heart {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 20px;
-  color: red;
-  cursor: pointer;
-  text-shadow: 0 0 0 black; /* Add a black text shadow to create an outline */
-  -webkit-text-stroke-width: 1px; /* Add a stroke to the text */
-  -webkit-text-stroke-color: black; /* Set the stroke color to black */
-  outline: none; /* Remove any default outline */
-}
-
-.icon-heart.clicked {
-  color: white;
-}
-
-.container_plans {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  max-width: 90vw; /* Adjusted to viewport width */
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-}
-
-h1 {
-  font-size: 28px;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.column {
-  flex: 1;
-}
-
-.planner-label {
-  display: block;
-  margin-top: 20px; /* Increased margin between labels and inputs */
-  color: black;
-}
-
-.planner-input {
-  width: calc(100% - 20px); /* Adjusted width to accommodate margins */
-  padding: 10px;
-  margin-top: 5px;
-  margin-bottom: 20px; /* Added margin below inputs */
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
-}
-
-.planner-submit {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.planner-submit:hover {
-  background-color: #0056b3;
+.diet-card p.diet-tips {
+  font-style: italic;
+  color: #888;
 }
