@@ -7,35 +7,38 @@ require 'sinatra/flash'
 
 enable :sessions
 
-
+# Helper method to check if user is logged in
+def logged_in?
+  !session[:user_id].nil? # If session user_id is set, the user is logged in
+end
 
 get('/') do
-  slim(:home)
+  slim(:home, locals: { logged_in: logged_in? }) # Pass the logged_in status to the view
 end
 
 get('/home') do 
-  slim(:home)
+  slim(:home, locals: { logged_in: logged_in? })
 end 
 
 get('/register') do 
-  slim(:register)
+  slim(:register, locals: { logged_in: logged_in? })
 end 
 
 get('/logout') do 
   session.clear
-  slim(:home)
+  redirect('/home')
 end
 
 get('/exercises') do 
-  slim(:exercises)
+  slim(:exercises, locals: { logged_in: logged_in? })
 end 
 
 get('/diets') do 
-  slim(:diets)
+  slim(:diets, locals: { logged_in: logged_in? })
 end 
 
 get('/plans') do 
-  slim(:plans)
+  slim(:plans, locals: { logged_in: logged_in? })
 end 
 
 post("/login_form") do
@@ -70,11 +73,14 @@ post("/register_form") do
     session[:name] = username
     redirect('/home')
   else
-    slim(:register, locals: { error_message: "Lösenordet Matchar Inte" })
+    slim(:register, locals: { error_message: "Lösenordet Matchar Inte", logged_in: logged_in? })
   end
 end
 
 post '/save_plans' do
+  # Check if the user is logged in before saving plans
+  redirect '/home' unless logged_in?
+
   # Retrieve user input from the form
   monday = params[:monday_input]
   tuesday = params[:tuesday_input]
