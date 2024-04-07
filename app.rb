@@ -41,6 +41,7 @@ get('/plans') do
   slim(:plans, locals: { logged_in: logged_in? })
 end 
 
+
 post("/login_form") do
   username = params[:username]
   password = params[:password]
@@ -79,20 +80,23 @@ end
 
 post '/save_plans' do
   # Check if the user is logged in before saving plans
-  redirect '/home' unless logged_in?
+  if logged_in?
+    # Retrieve user input from the form
+    monday = params[:monday_input]
+    tuesday = params[:tuesday_input]
+    wednesday = params[:wednesday_input]
+    thursday = params[:thursday_input]
+    friday = params[:friday_input]
+    saturday = params[:saturday_input]
+    sunday = params[:sunday_input]
 
-  # Retrieve user input from the form
-  monday = params[:monday_input]
-  tuesday = params[:tuesday_input]
-  wednesday = params[:wednesday_input]
-  thursday = params[:thursday_input]
-  friday = params[:friday_input]
-  saturday = params[:saturday_input]
-  sunday = params[:sunday_input]
-  
-  # Insert the user's plans into the plans table
-  db = SQLite3::Database.new('db/ovning_urval.db')
-  db.execute("INSERT INTO plans (UserID, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", session[:user_id], monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+    # Insert the user's plans into the plans table
+    db = SQLite3::Database.new('db/ovning_urval.db')
+    db.execute("INSERT INTO plans (UserID, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", session[:user_id], monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 
-  redirect '/plans'
+    redirect '/plans'
+  else
+    # Handle unauthorized access (e.g., display an error message or redirect to the login page)
+    redirect '/home'
+  end
 end
