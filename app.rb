@@ -18,7 +18,7 @@ end
 
 get('/home') do 
   slim(:home, locals: { logged_in: logged_in? })
-end 
+end
 
 get('/register') do 
   slim(:register, locals: { logged_in: logged_in? })
@@ -33,9 +33,10 @@ get('/exercises') do
   slim(:exercises, locals: { logged_in: logged_in? })
 end 
 
+
 get('/diets') do 
   slim(:diets, locals: { logged_in: logged_in? })
-end 
+end
 
 get('/plans') do 
   slim(:plans, locals: { logged_in: logged_in? })
