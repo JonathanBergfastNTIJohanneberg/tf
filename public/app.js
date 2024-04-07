@@ -50,4 +50,21 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
 });
-  
+
+document.addEventListener("DOMContentLoaded", function() {
+  const searchInput = document.querySelector('input[name="item"]');
+  const articles = document.querySelectorAll('.diet_layout');
+
+  searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.trim().toLowerCase();
+      
+      articles.forEach(article => {
+          const title = article.querySelector('h3').textContent.trim().toLowerCase();
+          if (title.includes(searchTerm)) {
+              article.style.display = 'block';
+          } else {
+              article.style.display = 'none';
+          }
+      });
+  });
+});
