@@ -5,13 +5,14 @@ body data-logged-in="#{logged_in?}"
       input#diet_name_input type="text" name="diet_name_input"
       label.title_diets for="diet_info_input" Diet Info:
       input#diet_info_input type="text" name="diet_info_input"
-      label.title_diets for="name_input" Diet Info:
+      label.title_diets for="name_input" Diet Info Tips:
       input#diet_info_input type="text" name="name_input"
       button type="submit" Save Diet
 
   .container_diets_2
     - diets.each do |diet|
       .diet-card
-        h2.diet-name = diet['Diet_Name']
-        p.diet-info = diet['Diet_Info']
-        p.diet-tips Tips: Add tips here
+        h2 Diet Name: #{diet['Diet_Name']}
+        p Diet Info: #{diet['Diet_Info']}
+        p Diet Info Tips: #{diet['name']}
+        p User: #{diet['user_name']}

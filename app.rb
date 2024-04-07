@@ -38,10 +38,11 @@ get('/exercises') do
 end 
 
 get '/diets' do
-  # Fetch diets from the database
-  diets = $db.execute("SELECT * FROM diets")
+  # Fetch diets along with user names from the database
+  diets = $db.execute("SELECT diets.*, user.name AS user_name FROM diets JOIN user ON diets.UserID = user.ID")
   slim(:diets, locals: { logged_in: logged_in?, diets: diets })
 end
+
 
 get('/plans') do 
   slim(:plans, locals: { logged_in: logged_in? })
