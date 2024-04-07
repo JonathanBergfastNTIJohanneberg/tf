@@ -38,7 +38,7 @@ get('/plans') do
   slim(:plans)
 end 
 
-post('/login_form') do
+post("/login_form") do
   username = params[:username]
   password = params[:password]
   email = params[:email]
@@ -48,12 +48,14 @@ post('/login_form') do
   result = db.execute("SELECT * FROM user WHERE name = ?", username).first
 
   if result && BCrypt::Password.new(result["password"]) == password
+    session[:user_id] = result["ID"] # Set the session user_id
     session[:name] = result["name"]
     redirect('/home')
   else
     "Incorrect username or password"
   end
 end
+
 
 post("/register_form") do
   username = params[:username]
@@ -70,4 +72,21 @@ post("/register_form") do
   else
     slim(:register, locals: { error_message: "Lösenordet Matchar Inte" })
   end
+end
+
+post '/save_plans' do
+  # Retrieve user input from the form
+  monday = params[:monday_input]
+  tuesday = params[:tuesday_input]
+  wednesday = params[:wednesday_input]
+  thursday = params[:thursday_input]
+  friday = params[:friday_input]
+  saturday = params[:saturday_input]
+  sunday = params[:sunday_input]
+  
+  # Insert the user's plans into the plans table
+  db = SQLite3::Database.new('db/ovning_urval.db')
+  db.execute("INSERT INTO plans (UserID, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", session[:user_id], monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+
+  redirect '/plans'
 end
