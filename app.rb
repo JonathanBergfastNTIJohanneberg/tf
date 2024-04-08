@@ -33,7 +33,8 @@ get('/logout') do
   redirect('/home')
 end
 
-get('/exercises') do 
+get('/exercises') do
+
   slim(:exercises, locals: { logged_in: logged_in? })
 end 
 
@@ -119,6 +120,35 @@ post '/save_diet' do
     redirect '/diets'
   else
     # Handle unauthorized access (e.g., display an error message or redirect to the login page)
+    redirect '/home'
+  end
+end
+
+post '/delete_diet/:id' do
+  if logged_in?
+    diet_id = params[:id]
+
+    # Delete the diet card from the database
+    $db.execute("DELETE FROM diets WHERE Diet_ID = ?", diet_id)
+
+    redirect '/diets'
+  else
+    redirect '/home'
+  end
+end
+
+post '/update_diet/:id' do
+  if logged_in?
+    diet_id = params[:id]
+    diet_name = params[:diet_name_input]
+    diet_info = params[:diet_info_input]
+    name = params[:name_input]
+
+    # Update the diet card in the database
+    $db.execute("UPDATE diets SET Diet_Name = ?, Diet_Info = ?, name = ? WHERE Diet_ID = ?", diet_name, diet_info, name, diet_id)
+
+    redirect '/diets'
+  else
     redirect '/home'
   end
 end

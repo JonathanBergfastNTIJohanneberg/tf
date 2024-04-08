@@ -1,2 +1,11 @@
 body data-logged-in="#{logged_in}"
-    p Exercises
+  .container_exercises 
+    h2.exercises_main_card_h2 Biceps
+    section.exercises_card_section
+      p 10 Exercises
+      .dropdown
+        button.dropbtn onclick="toggleDropdown()" Dropdown
+          .dropdown-content#myDropdown
+            a href="#" Link 1
+            a href="#" Link 2
+            a href="#" Link 3

@@ -51,3 +51,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 });
+
+function toggleDropdown() {
+  var dropdown = document.getElementById("myDropdown");
+  dropdown.classList.toggle("open");
+}  
