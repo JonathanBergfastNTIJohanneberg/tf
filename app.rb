@@ -22,14 +22,19 @@ helpers do
   end
 end
 
+get('/') do
+  slim(:"home/home", locals: { logged_in: logged_in? }) # Pass the logged_in status to the view
+end
+
 get('/home') do 
   # Render home page, passing logged_in status to template
-  slim(:home, locals: { logged_in: logged_in? })
+  slim(:"home/home", locals: { logged_in: logged_in? })
 end
+
 
 get('/register') do 
   # Render registration page, passing logged_in status to template
-  slim(:register, locals: { logged_in: logged_in? })
+  slim(:"register/register", locals: { logged_in: logged_in? })
 end 
 
 get('/logout') do 
@@ -40,28 +45,26 @@ end
 
 get('/exercises') do
   # Render exercises page, passing logged_in status to template
-  slim(:exercises, locals: { logged_in: logged_in? })
+  slim(:"exercises/exercises", locals: { logged_in: logged_in? })
 end 
 
 get '/admin' do
   # Retrieve all users from the database
   users = $db.execute("SELECT * FROM user")
   # Render admin page, passing users data to template
-  slim(:admin, locals: { users: users })
+  slim(:"admin/admin", locals: { users: users })
 end
-
-
 
 get '/diets' do
   # Fetch diets along with user names from the database
   diets = $db.execute("SELECT diets.*, user.name AS user_name FROM diets JOIN user ON diets.UserID = user.ID")
-  slim(:diets, locals: { logged_in: logged_in?, diets: diets })
+  slim(:"diets/diets", locals: { logged_in: logged_in?, diets: diets })
 end
 
 
 get('/plans') do 
   # Render plans page, passing logged_in status to template
-  slim(:plans, locals: { logged_in: logged_in? })
+  slim(:"plans/plans", locals: { logged_in: logged_in? })
 end 
 
 post("/login_form") do
@@ -217,12 +220,20 @@ post '/update_user/:id' do
   if admin_logged_in?
     # Extract parameters from request
     user_id = params[:id]
-    name = params[:name]
-    email = params[:email]
+    name = params[:name_user]
     admin = params[:admin]
 
+    # Ensure name parameter is not nil and not empty
+    if name && !name.empty?
+      # Strip leading and trailing whitespace
+      name.strip!
+    else
+      # Redirect back to admin panel if name is missing or empty
+      redirect '/admin'
+    end
+
     # Update the user in the database
-    $db.execute("UPDATE user SET name = ?, email = ?, admin = ? WHERE ID = ?", name, email, admin, user_id)
+    $db.execute("UPDATE user SET name = ?, admin = ? WHERE ID = ?", name, admin, user_id)
 
     # Redirect to admin panel after update
     redirect '/admin'
