@@ -162,7 +162,6 @@ h2.logo a {
 
 
 
-
 .box {
   margin: 10px;
   width: 300px;
@@ -241,6 +240,7 @@ h2.logo a {
   background: linear-gradient(to right, #63707e, #8b9eb2); 
   box-shadow: 0 0 20px #63707e;
 } 
+
 
 .one {
 	background: url(img/gym_card.jpg);
@@ -673,4 +673,42 @@ h1 {
 /* Style the dropdown when it's open */
 .dropdown.open .dropbtn {
   background-color: #3e8e41;
+}
+
+/* Style the table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+/* Style the table headers */
+th {
+  background-color: #f2f2f2;
+  padding: 8px;
+  text-align: left;
+}
+
+/* Style the table rows */
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Style the table data cells */
+td {
+  padding: 8px;
+}
+
+/* Style the update and delete buttons */
+input[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 6px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+input[type="submit"]:hover {
+  background-color: #45a049;
 }

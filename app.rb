@@ -1,42 +1,56 @@
-require 'sinatra'
-require 'slim'
-require 'sqlite3'
-require 'bcrypt'
-require 'sinatra/reloader'
-require 'sinatra/flash'
+require 'sinatra' # Import the Sinatra framework.
+require 'slim' # Import the Slim template engine.
+require 'sqlite3' # Import SQLite3 for database interaction.
+require 'bcrypt' # Import bcrypt for password hashing.
+require 'sinatra/reloader' # Enable reloading of Sinatra app during development.
+require 'sinatra/flash' # Enable flashing messages in Sinatra.
 
-enable :sessions
+enable :sessions # Enable session management.
 
-# Establish a single database connection
+# Establish a single database connection.
 $db = SQLite3::Database.new('db/ovning_urval.db')
-$db.results_as_hash = true
+$db.results_as_hash = true # Retrieve results as a hash.
 
-# Helper method to check if user is logged in
+# Helper method to check if user is logged in.
 def logged_in?
-  !session[:user_id].nil? # If session user_id is set, the user is logged in
+  !session[:user_id].nil? # Check if session user_id is set.
 end
 
-get('/') do
-  slim(:home, locals: { logged_in: logged_in? }) # Pass the logged_in status to the view
+helpers do
+  def admin_logged_in?
+    !session[:user_id].nil? && $db.execute("SELECT admin FROM user WHERE ID = ?", session[:user_id]).first["admin"] == 1
+  end
 end
 
 get('/home') do 
+  # Render home page, passing logged_in status to template
   slim(:home, locals: { logged_in: logged_in? })
 end
 
 get('/register') do 
+  # Render registration page, passing logged_in status to template
   slim(:register, locals: { logged_in: logged_in? })
 end 
 
 get('/logout') do 
+  # Clear session data and redirect to home page
   session.clear
   redirect('/home')
 end
 
 get('/exercises') do
-
+  # Render exercises page, passing logged_in status to template
   slim(:exercises, locals: { logged_in: logged_in? })
 end 
+
+get '/admin' do
+  # Retrieve all users from the database
+  users = $db.execute("SELECT * FROM user")
+  # Render admin page, passing users data to template
+  slim(:admin, locals: { users: users })
+end
+
+
 
 get '/diets' do
   # Fetch diets along with user names from the database
@@ -46,38 +60,55 @@ end
 
 
 get('/plans') do 
+  # Render plans page, passing logged_in status to template
   slim(:plans, locals: { logged_in: logged_in? })
 end 
 
 post("/login_form") do
+  # Extract username and password from request parameters
   username = params[:username]
   password = params[:password]
-  email = params[:email]
-  
+
+  # Query the database for the user with the provided username
   result = $db.execute("SELECT * FROM user WHERE name = ?", username).first
 
+  # Check if user exists and password matches
   if result && BCrypt::Password.new(result["password"]) == password
-    session[:user_id] = result["ID"] # Set the session user_id
+    # Set session user_id and name if login successful
+    session[:user_id] = result["ID"]
     session[:name] = result["name"]
-    redirect('/home')
+    redirect('/home') # Redirect to home page after successful login
   else
-    "Incorrect username or password"
+    "Incorrect username or password" # Display error message if login fails
   end
 end
 
+
+
+
 post("/register_form") do
+  # Extract parameters from request
   username = params[:username]
   password = params[:password]
   email = params[:email]
   password_confirm = params[:password_confirm]
 
+  # Check if password and password confirmation match
   if password == password_confirm
+    # Create password digest using bcrypt
     password_digest = BCrypt::Password.create(password)
-    $db.execute("INSERT INTO user (name, password, email) VALUES (?, ?, ?)", username, password_digest, email)
+    
+    # Insert new user into the database
+    $db.execute("INSERT INTO user (name, password, email, admin) VALUES (?, ?, ?, 0)", username, password_digest, email)
+    
+    # Set session name to the registered username
     session[:name] = username
+    
+    # Redirect to home page after successful registration
     redirect('/home')
   else
-    slim(:register, locals: { error_message: "Lösenordet Matchar Inte", logged_in: logged_in? })
+    # Render registration page with error message if passwords do not match
+    slim(:register, locals: { error_message: "Passwords do not match", logged_in: logged_in? })
   end
 end
 
@@ -125,20 +156,27 @@ post '/save_diet' do
 end
 
 post '/delete_diet/:id' do
+  # Check if any user is logged in
   if logged_in?
+    # Extract diet ID from request parameters
     diet_id = params[:id]
 
     # Delete the diet card from the database
     $db.execute("DELETE FROM diets WHERE Diet_ID = ?", diet_id)
 
+    # Redirect to diets page after deletion
     redirect '/diets'
   else
+    # Redirect to home page if no user is logged in
     redirect '/home'
   end
 end
 
+
 post '/update_diet/:id' do
+  # Check if any user is logged in
   if logged_in?
+    # Extract parameters from request
     diet_id = params[:id]
     diet_name = params[:diet_name_input]
     diet_info = params[:diet_info_input]
@@ -147,8 +185,49 @@ post '/update_diet/:id' do
     # Update the diet card in the database
     $db.execute("UPDATE diets SET Diet_Name = ?, Diet_Info = ?, name = ? WHERE Diet_ID = ?", diet_name, diet_info, name, diet_id)
 
+    # Redirect to diets page after update
     redirect '/diets'
   else
+    # Redirect to home page if no user is logged in
+    redirect '/home'
+  end
+end
+
+
+post '/delete_user/:id' do
+  # Check if admin is logged in
+  if admin_logged_in?
+    # Extract user ID from request parameters
+    user_id = params[:id]
+
+    # Delete the user from the database
+    $db.execute("DELETE FROM user WHERE ID = ?", user_id)
+
+    # Redirect to admin panel after deletion
+    redirect '/admin'
+  else
+    # Redirect to home page if admin is not logged in
+    redirect '/home'
+  end
+end
+
+
+post '/update_user/:id' do
+  # Check if admin is logged in
+  if admin_logged_in?
+    # Extract parameters from request
+    user_id = params[:id]
+    name = params[:name]
+    email = params[:email]
+    admin = params[:admin]
+
+    # Update the user in the database
+    $db.execute("UPDATE user SET name = ?, email = ?, admin = ? WHERE ID = ?", name, email, admin, user_id)
+
+    # Redirect to admin panel after update
+    redirect '/admin'
+  else
+    # Redirect to home page if admin is not logged in
     redirect '/home'
   end
 end
