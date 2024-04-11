@@ -4,6 +4,7 @@ require 'sqlite3' # Import SQLite3 for database interaction.
 require 'bcrypt' # Import bcrypt for password hashing.
 require 'sinatra/reloader' # Enable reloading of Sinatra app during development.
 require 'sinatra/flash' # Enable flashing messages in Sinatra.
+require_relative 'models.rb'
 
 enable :sessions # Enable session management.
 
@@ -21,6 +22,7 @@ helpers do
     !session[:user_id].nil? && $db.execute("SELECT admin FROM user WHERE ID = ?", session[:user_id]).first["admin"] == 1
   end
 end
+
 
 get('/') do
   slim(:"home/home", locals: { logged_in: logged_in? }) # Pass the logged_in status to the view
@@ -48,16 +50,17 @@ get('/exercises') do
   slim(:"exercises/exercises", locals: { logged_in: logged_in? })
 end 
 
+
 get '/admin' do
   # Retrieve all users from the database
-  users = $db.execute("SELECT * FROM user")
+  users = get_users 
   # Render admin page, passing users data to template
   slim(:"admin/admin", locals: { users: users })
 end
 
 get '/diets' do
   # Fetch diets along with user names from the database
-  diets = $db.execute("SELECT diets.*, user.name AS user_name FROM diets JOIN user ON diets.UserID = user.ID")
+  diets = get_diets
   slim(:"diets/diets", locals: { logged_in: logged_in?, diets: diets })
 end
 
@@ -73,7 +76,7 @@ post("/login_form") do
   password = params[:password]
 
   # Query the database for the user with the provided username
-  result = $db.execute("SELECT * FROM user WHERE name = ?", username).first
+  result = get_results(username)
 
   # Check if user exists and password matches
   if result && BCrypt::Password.new(result["password"]) == password
@@ -102,7 +105,7 @@ post("/register_form") do
     password_digest = BCrypt::Password.create(password)
     
     # Insert new user into the database
-    $db.execute("INSERT INTO user (name, password, email, admin) VALUES (?, ?, ?, 0)", username, password_digest, email)
+    get_register_form(username, password_digest, email)
     
     # Set session name to the registered username
     session[:name] = username
@@ -128,7 +131,7 @@ post '/save_plans' do
     sunday = params[:sunday_input]
 
     # Insert the user's plans into the plans table
-    $db.execute("INSERT INTO plans (UserID, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", session[:user_id], monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+    save_plans(session[:user_id], monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 
     redirect '/plans'
   else
@@ -149,7 +152,7 @@ post '/save_diet' do
     user_id = session[:user_id]
 
     # Insert the user's diet into the diets table
-    $db.execute("INSERT INTO diets (Diet_Name, Diet_Info, UserID, name) VALUES (?, ?, ?, ?)", diet_name, diet_info, user_id, name)
+    save_diet(diet_name, diet_info, user_id, name)
 
     redirect '/diets'
   else
@@ -165,7 +168,7 @@ post '/delete_diet/:id' do
     diet_id = params[:id]
 
     # Delete the diet card from the database
-    $db.execute("DELETE FROM diets WHERE Diet_ID = ?", diet_id)
+    delete_diet(diet_id)
 
     # Redirect to diets page after deletion
     redirect '/diets'
@@ -186,7 +189,7 @@ post '/update_diet/:id' do
     name = params[:name_input]
 
     # Update the diet card in the database
-    $db.execute("UPDATE diets SET Diet_Name = ?, Diet_Info = ?, name = ? WHERE Diet_ID = ?", diet_name, diet_info, name, diet_id)
+    update_diet(diet_name, diet_info, name, diet_id)
 
     # Redirect to diets page after update
     redirect '/diets'
@@ -204,7 +207,7 @@ post '/delete_user/:id' do
     user_id = params[:id]
 
     # Delete the user from the database
-    $db.execute("DELETE FROM user WHERE ID = ?", user_id)
+    delet_user(user_id)
 
     # Redirect to admin panel after deletion
     redirect '/admin'
@@ -233,7 +236,7 @@ post '/update_user/:id' do
     end
 
     # Update the user in the database
-    $db.execute("UPDATE user SET name = ?, admin = ? WHERE ID = ?", name, admin, user_id)
+    update_user(name, admin, user_id)
 
     # Redirect to admin panel after update
     redirect '/admin'
