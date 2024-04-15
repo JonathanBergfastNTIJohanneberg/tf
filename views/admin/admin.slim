@@ -10,16 +10,15 @@ table
         form.form-inline(action="/update_user/#{user["ID"]}" method="post")
           label.title_diets for="name_input" Name:
           input#name_input(type="text" name="name_user" value=user["name"])
+          input(type="submit" value="Update")
           select(name="admin")
             - if user["admin"] == 1
               option(value="1" selected) Admin
               option(value="0") Normal
             - else
               option(value="1") Admin
-              option(value="0" selected) Normal
+              option(value="0" selected) Normal 
       td=user["email"]
       td
         form(action="/delete_user/#{user["ID"]}" method="post")
           input(type="submit" value="Delete")
-        form(action="/update_user/#{user["ID"]}" method="post")
-          input(type="submit" value="Update")
