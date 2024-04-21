@@ -70,6 +70,19 @@ get('/plans') do
   slim(:"plans/plans", locals: { logged_in: logged_in? })
 end 
 
+# Metod för att kontrollera om användaren är inloggad och har tillgång till begränsade sidor
+def require_login!
+  redirect '/register' unless logged_in?
+end
+
+# Begränsade sidor som kräver inloggning
+restricted_pages = ['/plans', '/diets', '/exercises']
+
+# Använd en "before" -filtret för att köra "require_login!"-metoden före varje route för begränsade sidor
+before restricted_pages do
+  require_login!
+end
+
 post("/login_form") do
   # Extract username and password from request parameters
   username = params[:username]

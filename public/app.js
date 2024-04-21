@@ -1,13 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
   const body = document.querySelector('body');
   const loggedIn = body.dataset.loggedIn === "true"; // Convert the attribute value to a boolean
-  
-  // If user is not logged in and tries to access certain pages, show a pop-up message and redirect
-  const restrictedPages = ['/plans', '/diets', '/exercises'];
-  if (!loggedIn && restrictedPages.includes(window.location.pathname)) {
-    alert("You need to register or log in to access this feature.");
-    window.location.href = '/register'; // Redirect unregistered users to the register page
-  }
+
   
   // Function to toggle dropdown content
   const toggleDropdown = function(dropdownButton) {
