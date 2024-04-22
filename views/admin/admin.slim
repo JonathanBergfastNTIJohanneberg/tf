@@ -7,7 +7,7 @@ table
   - users.each do |user|
     tr
       td
-        form.form-inline(action="/update_user/#{user["ID"]}" method="post")
+        form.form-inline(action="/user/#{user["ID"]}/update" method="post")
           label.title_diets for="name_input" Name:
           input#name_input(type="text" name="name_user" value=user["name"])
           input(type="submit" value="Update")
@@ -20,5 +20,5 @@ table
               option(value="0" selected) Normal 
       td=user["email"]
       td
-        form(action="/delete_user/#{user["ID"]}" method="post")
+        form(action="/user/#{user["ID"]}/delete" method="post")
           input(type="submit" value="Delete")

@@ -8,6 +8,8 @@ require_relative 'models.rb'
 
 enable :sessions # Enable session management.
 
+include Models
+
 # Establish a single database connection.
 $db = SQLite3::Database.new('db/ovning_urval.db')
 $db.results_as_hash = true # Retrieve results as a hash.
@@ -83,7 +85,7 @@ before restricted_pages do
   require_login!
 end
 
-post("/login_form") do
+post"/login" do
   # Extract username and password from request parameters
   username = params[:username]
   password = params[:password]
@@ -105,7 +107,7 @@ end
 
 
 
-post("/register_form") do
+post "/create_user" do
   # Extract parameters from request
   username = params[:username]
   password = params[:password]
@@ -131,7 +133,7 @@ post("/register_form") do
   end
 end
 
-post '/save_plans' do
+post '/plans' do
   # Check if the user is logged in before saving plans
   if logged_in?
     # Retrieve user input from the form
@@ -153,7 +155,7 @@ post '/save_plans' do
   end
 end
 
-post '/save_diet' do
+post '/diet' do
   # Check if the user is logged in before saving diets
   if logged_in?
     # Retrieve user input from the form
@@ -174,7 +176,7 @@ post '/save_diet' do
   end
 end
 
-post '/delete_diet/:id' do
+post '/diet/:id/delete' do
   # Check if any user is logged in
   if logged_in?
     # Extract diet ID from request parameters
@@ -192,7 +194,7 @@ post '/delete_diet/:id' do
 end
 
 
-post '/update_diet/:id' do
+post '/diet/:id/update' do
   # Check if any user is logged in
   if logged_in?
     # Extract parameters from request
@@ -213,7 +215,7 @@ post '/update_diet/:id' do
 end
 
 
-post '/delete_user/:id' do
+post '/user/:id/delete' do
   # Check if admin is logged in
   if admin_logged_in?
     # Extract user ID from request parameters
@@ -231,7 +233,7 @@ post '/delete_user/:id' do
 end
 
 
-post '/update_user/:id' do
+post '/user/:id/update' do
   # Check if admin is logged in
   if admin_logged_in?
     # Extract parameters from request
