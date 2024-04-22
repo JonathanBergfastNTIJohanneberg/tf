@@ -2,6 +2,9 @@
       - diets.each do |diet|
         .diet-card
           h2 Diet Name: #{diet['Diet_Name']}
+          a href="/diets/#{diet['Diet_ID']}/edit" Update 
           p Diet Info: #{diet['Diet_Info']}
           p Diet Info Tips: #{diet['name']}
           p User: #{diet['user_name']}
+          form(action="/diet/#{diet['Diet_ID']}/delete" method="post")
+                button(type="submit") Delete

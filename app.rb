@@ -77,8 +77,8 @@ get '/diets/show' do
 end 
 
 get '/diets/:id/edit' do 
-  diet = get_diet
-  slim(:"diets/edit", locals: {logged_in: logged_in?, diets: diets})
+  diet = get_diet(params[:id])
+  slim(:"diets/edit", locals: {logged_in: logged_in?, diet: diet})
 end
 
 get('/plans') do 
