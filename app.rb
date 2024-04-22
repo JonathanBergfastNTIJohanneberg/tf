@@ -63,9 +63,23 @@ end
 get '/diets' do
   # Fetch diets along with user names from the database
   diets = get_diets
-  slim(:"diets/diets", locals: { logged_in: logged_in?, diets: diets })
+  slim(:"diets/diets", locals: { logged_in: logged_in?, diets: diets})
 end
 
+get '/diets/new' do 
+  diets = get_diets
+  slim(:"diets/new", locals: {logged_in: logged_in?, diets: diets})
+end 
+
+get '/diets/show' do 
+  diets = get_diets
+  slim(:"diets/show", locals: {logged_in: logged_in?, diets: diets})
+end 
+
+get '/diets/:id/edit' do 
+  diet = get_diet
+  slim(:"diets/edit", locals: {logged_in: logged_in?, diets: diets})
+end
 
 get('/plans') do 
   # Render plans page, passing logged_in status to template
@@ -188,7 +202,7 @@ post '/diet/:id/delete' do
     # Redirect to diets page after deletion
     redirect '/diets'
   else
-    # Redirect to home page if no user is logged in
+    # Redirect to home page if no user is logged in 
     redirect '/home'
   end
 end

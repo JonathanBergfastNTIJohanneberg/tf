@@ -1,0 +1,12 @@
+- if diet['UserID'] == session[:user_id]
+            .actions
+              form.form-inline(action="/diet/#{diet['Diet_ID']}/update" method="post")
+                label.title_diets for="diet_name_input" Diet Name:
+                input#diet_name_input(type="text" name="diet_name_input" value="#{diet['Diet_Name']}")
+                label.title_diets for="diet_info_input" Diet Info:
+                input#diet_info_input(type="text" name="diet_info_input" value="#{diet['Diet_Info']}")
+                label.title_diets for="name_input" Diet Info Tips:
+                input#diet_info_input(type="text" name="name_input" value="#{diet['name']}")
+                button(type="submit") Update
+              form(action="/diet/#{diet['Diet_ID']}/delete" method="post")
+                button(type="submit") Delete
