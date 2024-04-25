@@ -63,7 +63,7 @@ end
 get '/diets' do
   # Fetch diets along with user names from the database
   diets = get_diets
-  slim(:"diets/diets", locals: { logged_in: logged_in?, diets: diets})
+  slim(:"diets/index", locals: { logged_in: logged_in?, diets: diets})
 end
 
 get '/diets/new' do 
@@ -92,7 +92,7 @@ def require_login!
 end
 
 # Begränsade sidor som kräver inloggning
-restricted_pages = ['/plans', '/diets', '/exercises']
+restricted_pages = ['/plans', '/diets/index', '/exercises']
 
 # Använd en "before" -filtret för att köra "require_login!"-metoden före varje route för begränsade sidor
 before restricted_pages do
@@ -183,7 +183,7 @@ post '/diet' do
     # Insert the user's diet into the diets table
     save_diet(diet_name, diet_info, user_id, name)
 
-    redirect '/diets'
+    redirect '/diets/index'
   else
     # Handle unauthorized access (e.g., display an error message or redirect to the login page)
     redirect '/home'
