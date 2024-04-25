@@ -56,8 +56,25 @@ end
 get '/admin' do
   # Retrieve all users from the database
   users = get_users 
-  # Render admin page, passing users data to template
-  slim(:"admin/admin", locals: { users: users })
+  slim(:"admin/index", locals: { users: users })
+end
+
+get '/admin/edit' do
+  # Retrieve all users from the database
+  users = get_users 
+  slim(:"admin/edit", locals: { users: users })
+end
+
+get '/admin/show' do
+  # Retrieve all users from the database
+  users = get_users 
+  slim(:"admin/show", locals: { users: users })
+end
+
+get '/admin/new' do
+  # Retrieve all users from the database
+  users = get_users 
+  slim(:"admin/new", locals: { users: users })
 end
 
 get '/diets' do

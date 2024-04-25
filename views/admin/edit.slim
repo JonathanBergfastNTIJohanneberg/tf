@@ -1,0 +1,24 @@
+table
+  tr
+    th Name
+    th Email
+    th Admin
+    th Actions
+  - users.each do |user|
+    tr
+      td
+        form.form-inline(action="/user/#{user["ID"]}/update" method="post")
+          label.title_diets for="name_input" Name:
+          input#name_input(type="text" name="name_user" value=user["name"])
+          input(type="submit" value="Update")
+          select(name="admin")
+            - if user["admin"] == 1
+              option(value="1" selected) Admin
+              option(value="0") Normal
+            - else
+              option(value="1") Admin
+              option(value="0" selected) Normal 
+      td=user["email"]
+      td
+        form(action="/user/#{user["ID"]}/delete" method="post")
+          input(type="submit" value="Delete")
