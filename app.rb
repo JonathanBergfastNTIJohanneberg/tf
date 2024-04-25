@@ -65,18 +65,6 @@ get '/admin/edit' do
   slim(:"admin/edit", locals: { users: users })
 end
 
-get '/admin/show' do
-  # Retrieve all users from the database
-  users = get_users 
-  slim(:"admin/show", locals: { users: users })
-end
-
-get '/admin/new' do
-  # Retrieve all users from the database
-  users = get_users 
-  slim(:"admin/new", locals: { users: users })
-end
-
 get '/diets' do
   # Fetch diets along with user names from the database
   diets = get_diets
@@ -109,7 +97,7 @@ def require_login!
 end
 
 # Begränsade sidor som kräver inloggning
-restricted_pages = ['/plans', '/diets/index', '/exercises']
+restricted_pages = ['/plans', '/diets', '/exercises']
 
 # Använd en "before" -filtret för att köra "require_login!"-metoden före varje route för begränsade sidor
 before restricted_pages do
@@ -226,40 +214,45 @@ end
 
 
 post '/diet/:id/update' do
-  # Check if any user is logged in
-  if logged_in?
-    # Extract parameters from request
-    diet_id = params[:id]
+  require_login!
+  
+  # Extract parameters from request
+  diet_id = params[:id]
+  diet = get_diet(diet_id)
+
+  # Verify the logged-in user is the diet owner
+  if session[:user_id] == diet['UserID']
     diet_name = params[:diet_name_input]
     diet_info = params[:diet_info_input]
     name = params[:name_input]
 
-    # Update the diet card in the database
     update_diet(diet_name, diet_info, name, diet_id)
-
-    # Redirect to diets page after update
-    redirect '/diets'
+    redirect '/diets/show'
   else
-    # Redirect to home page if no user is logged in
-    redirect '/home'
+    status 403
+    "You do not have permission to update this diet."
   end
 end
 
 
-post '/user/:id/delete' do
-  # Check if admin is logged in
-  if admin_logged_in?
-    # Extract user ID from request parameters
-    user_id = params[:id]
 
-    # Delete the user from the database
-    delet_user(user_id)
+post '/diet/:id/delete' do
+  # Ensure the user is logged in
+  require_login!
+  
+  # Extract diet ID from request parameters
+  diet_id = params[:id]
+  
+  # Fetch the diet to check the owner
+  diet = get_diet(diet_id)
 
-    # Redirect to admin panel after deletion
-    redirect '/admin'
+  # Only proceed if the logged-in user is the owner of the diet
+  if session[:user_id] == diet['UserID']
+    delete_diet(diet_id)
+    redirect '/diets'
   else
-    # Redirect to home page if admin is not logged in
-    redirect '/home'
+    status 403  # Forbidden access
+    "You do not have permission to delete this diet."
   end
 end
 
