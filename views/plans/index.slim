@@ -1,0 +1,30 @@
+body.planner-body data-logged-in="#{logged_in}"
+  .container_plans
+    h1 Weekly Planner
+    form#planner-form action="/plans" method="post"
+      .row
+        .column
+          label.planner-label for="monday_input" Monday:
+          input.planner-input type="text" name="monday_input" id="monday_input"
+        .column
+          label.planner-label for="tuesday_input" Tuesday:
+          input.planner-input type="text" name="tuesday_input" id="tuesday_input"
+        .column
+          label.planner-label for="wednesday_input" Wednesday:
+          input.planner-input type="text" name="wednesday_input" id="wednesday_input"
+      .row
+        .column
+          label.planner-label for="thursday_input" Thursday:
+          input.planner-input type="text" name="thursday_input" id="thursday_input"
+        .column
+          label.planner-label for="friday_input" Friday:
+          input.planner-input type="text" name="friday_input" id="friday_input"
+        .column
+          label.planner-label for="saturday_input" Saturday:
+          input.planner-input type="text" name="saturday_input" id="saturday_input"
+        .column
+          label.planner-label for="sunday_input" Sunday:
+          input.planner-input type="text" name="sunday_input" id="sunday_input"
+      button.planner-submit type="submit" Save Plans
+      button.planner-submit
+        a href="/plans/show" Show plans

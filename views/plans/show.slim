@@ -1,0 +1,14 @@
+body.planner-body data-logged-in="#{logged_in}"
+  .container_plans
+    h1 Weekly Planner
+    - if plan
+      .plan-details
+        p Monday: #{plan['Monday']}
+        p Tuesday: #{plan['Tuesday']}
+        p Wednesday: #{plan['Wednesday']}
+        p Thursday: #{plan['Thursday']}
+        p Friday: #{plan['Friday']}
+        p Saturday: #{plan['Saturday']}
+        p Sunday: #{plan['Sunday']}
+    - else
+      p No plan found.

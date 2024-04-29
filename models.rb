@@ -30,6 +30,12 @@ module Models
         db.execute("INSERT INTO user (name, password, email, admin) VALUES (?, ?, ?, 0)", username, password_digest, email)
     end 
 
+    def get_user_plan(user_id)
+        db = connect_to_db
+        plan = db.execute("SELECT * FROM plans WHERE UserID = ?", user_id).first
+        return plan
+    end      
+
     def save_plans(user_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday)
         db = connect_to_db
         db.execute("INSERT INTO plans (UserID, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", user_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday)

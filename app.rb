@@ -86,10 +86,26 @@ get '/diets/:id/edit' do
   slim(:"diets/edit", locals: {logged_in: logged_in?, diet: diet})
 end
 
-get('/plans') do 
-  # Render plans page, passing logged_in status to template
-  slim(:"plans/plans", locals: { logged_in: logged_in? })
+get '/plans' do
+  # Check if the user is logged in
+  if logged_in?
+    # Retrieve the user's plan by user ID
+    user_id = session[:user_id]
+    plan = get_user_plan(user_id)
+    p plan 
+    slim(:"plans/index", locals: { logged_in: logged_in?, plan: plan })
+  else
+    # Handle unauthorized access
+    redirect '/home'
+  end
+end
+
+get '/plans/show' do 
+  user_id = session[:user_id]
+  plan = get_user_plan(user_id)
+  slim(:"plans/show", locals: { logged_in: logged_in?, plan: plan })
 end 
+
 
 # Metod för att kontrollera om användaren är inloggad och har tillgång till begränsade sidor
 def require_login!
@@ -167,12 +183,14 @@ post '/plans' do
     # Insert the user's plans into the plans table
     save_plans(session[:user_id], monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 
-    redirect '/plans'
+    redirect '/plans/show' # Redirect to show page after saving plans
   else
     # Handle unauthorized access (e.g., display an error message or redirect to the login page)
     redirect '/home'
   end
 end
+
+
 
 post '/diet' do
   # Check if the user is logged in before saving diets
@@ -237,21 +255,21 @@ end
 
 
 post '/diet/:id/delete' do
-  # Ensure the user is logged in
+  #Ensure the user is logged in
   require_login!
   
-  # Extract diet ID from request parameters
+  #Extract diet ID from request parameters
   diet_id = params[:id]
   
-  # Fetch the diet to check the owner
+  #Fetch the diet to check the owner
   diet = get_diet(diet_id)
 
-  # Only proceed if the logged-in user is the owner of the diet
+  #Only proceed if the logged-in user is the owner of the diet
   if session[:user_id] == diet['UserID']
     delete_diet(diet_id)
     redirect '/diets'
   else
-    status 403  # Forbidden access
+    status 403  #Forbidden access
     "You do not have permission to delete this diet."
   end
 end
