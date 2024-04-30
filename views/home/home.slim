@@ -2,13 +2,6 @@
   .inner-header.flex
     .container
       .wrap
-        .box.one
-           a.container_links(href="/exercises")
-            .date
-              h4 Discover
-            h1 EXERCISES 
-            .poster.p1
-              h4 E
         .box.two
           a.container_links(href="/diets")
             .date
@@ -23,12 +16,6 @@
             h1 PLANS
             .poster.p3
               h4 P
-        .box.five
-          .date
-            h4 Understand 
-          h1 MUSCLES 
-          .poster.p4
-            h4 M
         - if admin_logged_in?  # Check if the user is an admin
           .box.six
             a.container_links(href="/admin")
