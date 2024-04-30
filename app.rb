@@ -95,6 +95,12 @@ get '/plans/show' do
   slim(:"plans/show", locals: { logged_in: logged_in?, plans: plans })
 end
 
+get '/plans/index' do 
+  user_id = session[:user_id]
+  plans = get_user_plan(user_id)
+  slim(:"plans/index", locals: { logged_in: logged_in?, plans: plans })
+end
+
 get '/plans/new' do 
   user_id = session[:user_id]
   plans = get_user_plan(user_id)
