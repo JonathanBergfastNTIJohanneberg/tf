@@ -7,12 +7,10 @@ require 'sinatra/flash'
 require_relative 'models.rb'
 
 enable :sessions
-
 include Models
 
 $db = SQLite3::Database.new('db/ovning_urval.db')
 $db.results_as_hash = true
-
 
 def logged_in?
   !session[:user_id].nil?
@@ -20,119 +18,142 @@ end
 
 helpers do
   def admin_logged_in?
-    !session[:user_id].nil? && $db.execute("SELECT admin FROM user WHERE ID = ?", session[:user_id]).first["admin"] == 1
+    logged_in? && $db.execute("SELECT admin FROM user WHERE ID = ?", session[:user_id]).first["admin"] == 1
+  end
+
+  def require_login!
+    redirect '/register' unless logged_in?
+  end
+end
+
+before do
+  # Allow users to access login and register without authentication
+  pass if ['/', '/register', '/login'].include?(request.path_info)
+
+  # Redirect to /register if the user is not logged in
+  if session[:user_id].nil?
+    session[:error] = "You must be logged in to access this page."
+    redirect('/register')
+    pass  # Ensure the remaining before filters are skipped
   end
 end
 
 
-get('/') do
-  slim(:"home/home", locals: { logged_in: logged_in? })
+before ['/admin/*'] do
+  unless admin_logged_in?
+    session[:error] = "You must be an admin to access this page."
+    redirect('/home')
+  end
 end
 
-get('/home') do 
-  slim(:"home/home", locals: { logged_in: logged_in? })
+before ['/plans/*', '/diets/*'] do
+  require_login!
+end
+
+before ['/diets/new', '/diets/:id/edit', '/diets/:id/delete'] do
+  require_login!
+end
+
+before ['/diet/:id/update', '/diet/:id/delete'] do
+  diet = get_diet(params[:id])
+  unless session[:user_id] == diet['UserID']
+    status 403
+    halt "You do not have permission to modify this diet."
+  end
+end
+
+get '/' do
+  slim(:'home/home', locals: { logged_in: logged_in? })
+end
+
+get '/home' do
+  puts "Current user ID in session: #{session[:user_id]}"  # Debugging output
+  slim(:'home/home', locals: { logged_in: logged_in? })
 end
 
 
-get('/register') do 
-  slim(:"register/register", locals: { logged_in: logged_in? })
+get '/register' do 
+  slim(:'register/register', locals: { logged_in: logged_in? })
 end 
 
-get('/logout') do 
+get '/logout' do 
   session.clear
-  redirect('/home')
+  redirect '/home'
 end
 
 get '/admin' do
   users = get_users 
-  slim(:"admin/index", locals: { users: users })
+  slim(:'admin/index', locals: { users: users })
 end
 
 get '/admin/edit' do
   users = get_users 
-  slim(:"admin/edit", locals: { users: users })
+  slim(:'admin/edit', locals: { users: users })
 end
 
 get '/diets' do
   diets = get_diets
-  slim(:"diets/index", locals: { logged_in: logged_in?, diets: diets})
+  slim(:'diets/index', locals: { logged_in: logged_in?, diets: diets})
 end
 
 get '/diets/new' do 
   diets = get_diets
-  slim(:"diets/new", locals: {logged_in: logged_in?, diets: diets})
+  slim(:'diets/new', locals: {logged_in: logged_in?, diets: diets})
 end 
 
 get '/diets/index' do 
   diets = get_diets
-  slim(:"diets/index", locals: {logged_in: logged_in?, diets: diets})
+  slim(:'diets/index', locals: {logged_in: logged_in?, diets: diets})
 end 
 
 get '/diets/show' do 
   diets = get_diets
-  slim(:"diets/show", locals: {logged_in: logged_in?, diets: diets})
+  slim(:'diets/show', locals: {logged_in: logged_in?, diets: diets})
 end 
 
 get '/diets/:id/edit' do 
   diet = get_diet(params[:id])
-  slim(:"diets/edit", locals: {logged_in: logged_in?, diet: diet})
+  slim(:'diets/edit', locals: {logged_in: logged_in?, diet: diet})
 end
 
 get '/plans' do
-  if logged_in?
-    user_id = session[:user_id]
-    plan = get_user_plan(user_id)
-    p plan 
-    slim(:"plans/index", locals: { logged_in: logged_in?, plan: plan })
-  else
-    redirect '/home'
-  end
+  user_id = session[:user_id]
+  plan = get_user_plan(user_id)
+  p plan 
+  slim(:'plans/index', locals: { logged_in: logged_in?, plan: plan })
 end
 
 get '/plans/show' do 
   user_id = session[:user_id]
   plans = get_user_plan(user_id)
-  slim(:"plans/show", locals: { logged_in: logged_in?, plans: plans })
+  slim(:'plans/show', locals: { logged_in: logged_in?, plans: plans })
 end
 
 get '/plans/index' do 
   user_id = session[:user_id]
   plans = get_user_plan(user_id)
-  slim(:"plans/index", locals: { logged_in: logged_in?, plans: plans })
+  slim(:'plans/index', locals: { logged_in: logged_in?, plans: plans })
 end
 
 get '/plans/new' do 
   user_id = session[:user_id]
   plans = get_user_plan(user_id)
-  slim(:"plans/new", locals: { logged_in: logged_in?, plans: plans })
+  slim(:'plans/new', locals: { logged_in: logged_in?, plans: plans })
 end
 
-
-
-def require_login!
-  redirect '/register' unless logged_in?
-end
-
-restricted_pages = ['/plans', '/diets']
-
-before restricted_pages do
-  require_login!
-end
-
-post"/login" do
+post '/login' do
   username = params[:username]
   password = params[:password]
   result = get_results(username)
   if result && BCrypt::Password.new(result["password"]) == password
     session[:user_id] = result["ID"]
     session[:name] = result["name"]
+    puts "Login successful: #{session[:user_id]}"  # Debugging output
     redirect('/home')
   else
     "Incorrect username or password"
   end
 end
-
-
 
 
 post "/create_user" do
@@ -151,81 +172,53 @@ post "/create_user" do
 end
 
 post '/plans' do
-  if logged_in?
-    monday = params[:monday_input]
-    tuesday = params[:tuesday_input]
-    wednesday = params[:wednesday_input]
-    thursday = params[:thursday_input]
-    friday = params[:friday_input]
-    saturday = params[:saturday_input]
-    sunday = params[:sunday_input]
-    save_plans(session[:user_id], monday, tuesday, wednesday, thursday, friday, saturday, sunday)
-
-    redirect '/plans/show'
-  else
-    redirect '/home'
-  end
+  require_login!
+  monday = params[:monday_input]
+  tuesday = params[:tuesday_input]
+  wednesday = params[:wednesday_input]
+  thursday = params[:thursday_input]
+  friday = params[:friday_input]
+  saturday = params[:saturday_input]
+  sunday = params[:sunday_input]
+  save_plans(session[:user_id], monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+  redirect '/plans/show'
 end
-
-
 
 post '/diet' do
-  if logged_in?
-    diet_name = params[:diet_name_input]
-    diet_info = params[:diet_info_input]
-    name = params[:name_input]
-    user_id = session[:user_id]
-    save_diet(diet_name, diet_info, user_id, name)
-
-    redirect '/diets/index'
-  else
-    redirect '/home'
-  end
+  require_login!
+  diet_name = params[:diet_name_input]
+  diet_info = params[:diet_info_input]
+  name = params[:name_input]
+  user_id = session[:user_id]
+  save_diet(diet_name, diet_info, user_id, name)
+  redirect '/diets/index'
 end
 
 post '/diet/:id/delete' do
-  if logged_in?
-    diet_id = params[:id]
-    delete_diet(diet_id)
-    redirect '/diets'
-  else
-    redirect '/home'
-  end
+  require_login!
+  diet_id = params[:id]
+  delete_diet(diet_id)
+  redirect '/diets'
 end
-
 
 post '/diet/:id/update' do
-  require_login!
   diet_id = params[:id]
-  diet = get_diet(diet_id)
-  if session[:user_id] == diet['UserID']
-    diet_name = params[:diet_name_input]
-    diet_info = params[:diet_info_input]
-    name = params[:name_input]
-
-    update_diet(diet_name, diet_info, name, diet_id)
-    redirect '/diets/show'
-  else
-    status 403
-    "You do not have permission to update this diet."
-  end
+  diet_name = params[:diet_name_input]
+  diet_info = params[:diet_info_input]
+  name = params[:name_input]
+  update_diet(diet_name, diet_info, name, diet_id)
+  redirect '/diets/show'
 end
 
-
-
-post '/diet/:id/delete' do
-  require_login!
-  diet_id = params[:id]
-  diet = get_diet(diet_id)
-  if session[:user_id] == diet['UserID']
-    delete_diet(diet_id)
-    redirect '/diets'
+post '/user/:id/delete' do
+  if admin_logged_in?
+    user_id = params[:id]
+    delet_user(user_id)
+    redirect '/admin'
   else
-    status 403
-    "You do not have permission to delete this diet."
+    redirect '/home'
   end
 end
-
 
 post '/user/:id/update' do
   if admin_logged_in?
