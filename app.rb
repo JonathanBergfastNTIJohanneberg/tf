@@ -28,8 +28,7 @@ end
 
 before do
   # Allow users to access login and register without authentication
-  pass if ['/', '/register', '/login'].include?(request.path_info)
-
+  pass if ['/', '/register', '/login', '/create_user'].include?(request.path_info)
   # Redirect to /register if the user is not logged in
   if session[:user_id].nil?
     session[:error] = "You must be logged in to access this page."
@@ -148,7 +147,6 @@ post '/login' do
   if result && BCrypt::Password.new(result["password"]) == password
     session[:user_id] = result["ID"]
     session[:name] = result["name"]
-    puts "Login successful: #{session[:user_id]}"  # Debugging output
     redirect('/home')
   else
     "Incorrect username or password"
