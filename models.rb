@@ -20,6 +20,12 @@ module Models
         db.execute("SELECT diets.*, user.name AS user_name FROM diets JOIN user ON diets.UserID = user.ID")
     end
 
+    def user_is_admin?(user_id)
+        db = connect_to_db
+        result = db.execute("SELECT admin FROM user WHERE ID = ?", user_id).first
+        result && result['admin'] == 1
+    end
+
     def get_results(username)
         db = connect_to_db
         db.execute("SELECT * FROM user WHERE name = ?", username).first

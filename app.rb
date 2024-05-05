@@ -18,7 +18,7 @@ end
 
 helpers do
   def admin_logged_in?
-    logged_in? && $db.execute("SELECT admin FROM user WHERE ID = ?", session[:user_id]).first["admin"] == 1
+    logged_in? && user_is_admin?(session[:user_id])
   end
 
   def require_login!
@@ -27,16 +27,13 @@ helpers do
 end
 
 before do
-  # Allow users to access login and register without authentication
   pass if ['/', '/register', '/login', '/create_user'].include?(request.path_info)
-  # Redirect to /register if the user is not logged in
   if session[:user_id].nil?
     session[:error] = "You must be logged in to access this page."
     redirect('/register')
-    pass  # Ensure the remaining before filters are skipped
+    pass
   end
 end
-
 
 before ['/admin/*'] do
   unless admin_logged_in?
@@ -69,7 +66,6 @@ get '/home' do
   puts "Current user ID in session: #{session[:user_id]}"  # Debugging output
   slim(:'home/home', locals: { logged_in: logged_in? })
 end
-
 
 get '/register' do 
   slim(:'register/register', locals: { logged_in: logged_in? })
@@ -152,7 +148,6 @@ post '/login' do
     "Incorrect username or password"
   end
 end
-
 
 post "/create_user" do
   username = params[:username]
