@@ -52,10 +52,6 @@ before ['/plans/*', '/diets/*'] do
   require_login!
 end
 
-before ['/diets/new', '/diets/:id/edit', '/diets/:id/delete'] do
-  require_login!
-end
-
 before ['/diet/:id/update', '/diet/:id/delete'] do
   diet = get_diet(params[:id])
   unless session[:user_id] == diet['UserID']
@@ -119,6 +115,21 @@ get '/diets/:id/edit' do
   diet = get_diet(params[:id])
   slim(:'diets/edit', locals: {logged_in: logged_in?, diet: diet})
 end
+
+# GET route to fetch a specific plan for editing
+get '/plans/:id/edit' do
+  require_login!
+  plan = get_user_plan_by_id(params[:id])
+  
+  # Check if the plan belongs to the logged-in user
+  if plan && session[:user_id] == plan['UserID']
+    slim(:'plans/edit', locals: { plan: plan, logged_in: logged_in? })
+  else
+    flash[:error] = "You are not authorized to edit this plan."
+    redirect '/plans'
+  end
+end
+
 
 get '/plans' do
   user_id = session[:user_id]
@@ -203,6 +214,21 @@ post '/plans' do
   save_plans(session[:user_id], monday, tuesday, wednesday, thursday, friday, saturday, sunday)
   redirect '/plans/show'
 end
+
+# POST route to update a specific plan
+post '/plans/:id/update' do
+  require_login!
+  plan = get_user_plan_by_id(params[:id])
+
+  if plan && session[:user_id] == plan['UserID']
+    update_plan(params[:id], params[:monday_input], params[:tuesday_input], params[:wednesday_input], params[:thursday_input], params[:friday_input], params[:saturday_input], params[:sunday_input])
+    redirect '/plans'
+  else
+    flash[:error] = "You are not authorized to update this plan."
+    redirect '/plans'
+  end
+end
+
 
 post '/diet' do
   require_login!

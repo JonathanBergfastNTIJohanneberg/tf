@@ -1,0 +1,35 @@
+doctype html
+html lang="en"
+  head
+    meta charset="UTF-8"
+    meta name="viewport" content="width=device-width, initial-scale=1.0"
+    link rel="stylesheet" href="/style.css"
+    title Edit Plan
+  body
+    h1 Edit Weekly Planner
+    form action="/plans/#{plan['ID']}/update" method="post"
+      .row
+        .column
+          label for="monday_input" Monday:
+          input type="text" name="monday_input" value="#{plan['Monday']}"
+        .column
+          label for="tuesday_input" Tuesday:
+          input type="text" name="tuesday_input" value="#{plan['Tuesday']}"
+        .column
+          label for="wednesday_input" Wednesday:
+          input type="text" name="wednesday_input" value="#{plan['Wednesday']}"
+        .column
+          label for="thursday_input" Thursday:
+          input type="text" name="thursday_input" value="#{plan['Thursday']}"
+        .column
+          label for="friday_input" Friday:
+          input type="text" name="friday_input" value="#{plan['Friday']}"
+        .column
+          label for="saturday_input" Saturday:
+          input type="text" name="saturday_input" value="#{plan['Saturday']}"
+        .column
+          label for="sunday_input" Sunday:
+          input type="text" name="sunday_input" value="#{plan['Sunday']}"
+      button type="submit" Save Changes
+
+    a href="/plans/show" Cancel

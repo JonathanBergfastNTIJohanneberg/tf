@@ -20,6 +20,17 @@ module Models
         db.execute("SELECT diets.*, user.name AS user_name FROM diets JOIN user ON diets.UserID = user.ID")
     end
 
+    def get_user_plan_by_id(plan_id)
+        db = connect_to_db
+        db.execute("SELECT * FROM plans WHERE ID = ?", plan_id).first
+      end
+      
+      def update_plan(plan_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+        db = connect_to_db
+        db.execute("UPDATE plans SET Monday = ?, Tuesday = ?, Wednesday = ?, Thursday = ?, Friday = ?, Saturday = ?, Sunday = ? WHERE ID = ?", monday, tuesday, wednesday, thursday, friday, saturday, sunday, plan_id)
+      end
+      
+
     def user_is_admin?(user_id)
         db = connect_to_db
         result = db.execute("SELECT admin FROM user WHERE ID = ?", user_id).first
