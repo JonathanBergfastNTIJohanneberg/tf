@@ -8,7 +8,7 @@ module Models
     def get_diet(id)
         db = connect_to_db
         db.execute("SELECT diets.*, user.name AS user_name FROM diets JOIN user ON diets.UserID = user.ID WHERE Diet_ID = ?", id).first
-    end 
+    end
 
     def get_users()
         db = connect_to_db

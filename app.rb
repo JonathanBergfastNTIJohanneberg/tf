@@ -33,7 +33,13 @@ before do
     redirect('/register')
     pass
   end
+  if session[:cooldown] && Time.now < session[:cooldown]
+    remaining_seconds = (session[:cooldown] - Time.now).ceil
+    flash[:error] = "Please wait #{remaining_seconds} seconds before trying again."
+    redirect '/register' unless request.path_info == '/register'
+  end
 end
+
 
 before ['/admin/*'] do
   unless admin_logged_in?
@@ -63,13 +69,16 @@ get '/' do
 end
 
 get '/home' do
-  puts "Current user ID in session: #{session[:user_id]}"  # Debugging output
+  puts "Current user ID in session: #{session[:user_id]}"
   slim(:'home/home', locals: { logged_in: logged_in? })
 end
 
 get '/register' do 
-  slim(:'register/register', locals: { logged_in: logged_in? })
-end 
+  # Pass remaining_seconds to the register page if a cooldown is active
+  remaining_seconds = session[:cooldown] && Time.now < session[:cooldown] ? (session[:cooldown] - Time.now).ceil : nil
+  slim(:'register/register', locals: { logged_in: logged_in?, remaining_seconds: remaining_seconds })
+end
+
 
 get '/logout' do 
   session.clear
@@ -139,13 +148,31 @@ end
 post '/login' do
   username = params[:username]
   password = params[:password]
-  result = get_results(username)
-  if result && BCrypt::Password.new(result["password"]) == password
-    session[:user_id] = result["ID"]
-    session[:name] = result["name"]
-    redirect('/home')
+  user = get_results(username)
+
+  if user
+    if BCrypt::Password.new(user["password"]) == password
+      session[:user_id] = user["ID"]
+      session[:name] = user["name"]
+      session[:attempts] = nil
+      session[:cooldown] = nil
+      redirect '/home'
+    else
+      session[:attempts] ||= 0
+      session[:attempts] += 1
+
+      if session[:attempts] >= 3
+        session[:cooldown] = Time.now + 5
+        session[:attempts] = nil
+        flash[:error] = "You have used all attempts. Please wait 5 seconds."
+      else
+        flash[:error] = "Incorrect password. #{3 - session[:attempts]} attempts left."
+      end
+      redirect back
+    end
   else
-    "Incorrect username or password"
+    flash[:error] = "User not found."
+    redirect back
   end
 end
 
@@ -160,7 +187,7 @@ post "/create_user" do
     session[:name] = username
     redirect('/home')
   else
-    slim(:register, locals: { error_message: "Passwords do not match", logged_in: logged_in? })
+    slim(:'register/register', locals: { error_message: "Passwords do not match", logged_in: logged_in? })
   end
 end
 

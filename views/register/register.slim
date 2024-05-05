@@ -5,7 +5,12 @@ html
     link rel="stylesheet" type="text/css" href="slide navbar style.css"
     link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet"
     script src="/script.js"
-  body#register_body 
+  body#register_body
+    - if remaining_seconds
+      meta http-equiv="refresh" content="1"
+      p Please wait #{remaining_seconds} seconds before trying again.
+    - elsif flash[:error]
+      p.error= flash[:error]
     .main
       input#chk[type="checkbox" aria-hidden="true"]
       .signup
@@ -23,3 +28,5 @@ html
           input[type="text" name="username" placeholder="User name" required]
           input[type="password" name="password" placeholder="Password" required]
           button.button Login
+          - if flash[:error]
+            p.error-message(style="color: red;")= flash[:error]
