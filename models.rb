@@ -25,11 +25,32 @@ module Models
         db.execute("SELECT * FROM plans WHERE ID = ?", plan_id).first
       end
       
-      def update_plan(plan_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+    def update_plan(plan_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday)
         db = connect_to_db
         db.execute("UPDATE plans SET Monday = ?, Tuesday = ?, Wednesday = ?, Thursday = ?, Friday = ?, Saturday = ?, Sunday = ? WHERE ID = ?", monday, tuesday, wednesday, thursday, friday, saturday, sunday, plan_id)
+    end
+    
+    def like_diet(user_id, diet_id)
+        db = connect_to_db
+        db.execute("INSERT INTO UserLikedDiets (UserID, DietID) VALUES (?, ?)", [user_id, diet_id])
       end
-      
+    
+    def unlike_diet(user_id, diet_id)
+        db = connect_to_db
+        db.execute("DELETE FROM UserLikedDiets WHERE UserID = ? AND DietID = ?", [user_id, diet_id])
+    end
+    
+    def check_like(user_id, diet_id)
+        db = connect_to_db
+        result = db.execute("SELECT * FROM UserLikedDiets WHERE UserID = ? AND DietID = ?", [user_id, diet_id])
+        !result.empty?
+    end
+    
+    def count_likes(diet_id)
+        db = connect_to_db
+        result = db.execute("SELECT COUNT(UserID) as count FROM UserLikedDiets WHERE DietID = ?", [diet_id])
+        result.first['count'] || 0
+    end
 
     def user_is_admin?(user_id)
         db = connect_to_db

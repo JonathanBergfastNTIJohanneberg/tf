@@ -260,6 +260,22 @@ post '/user/:id/delete' do
   end
 end
 
+post '/diets/:id/like' do
+  require_login!
+  unless check_like(session[:user_id], params[:id])
+    like_diet(session[:user_id], params[:id])
+  end
+  redirect back
+end
+
+post '/diets/:id/unlike' do
+  require_login!!
+  if check_like(session[:user_id], params[:id])
+    unlike_diet(session[:user_id], params[:id])
+  end
+  redirect back
+end
+
 post '/user/:id/update' do
   if admin_logged_in?
     user_id = params[:id]

@@ -8,16 +8,17 @@ html lang="en"
     style 
       | @import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
 
-
-
 .container_diets_2
   - diets.each do |diet|
     .diet-card
       h2 Diet Name: #{diet['Diet_Name']}
-      - if diet['UserID'] == session[:user_id]
-        a href="/diets/#{diet['Diet_ID']}/edit" Update
-        form(action="/diet/#{diet['Diet_ID']}/delete" method="post")
-          button(type="submit") Delete
-      p Diet Info: #{diet['Diet_Info']}-
+      p Diet Info: #{diet['Diet_Info']}
       p Diet Info Tips: #{diet['name']}
       p User: #{diet['user_name']}
+      p Likes: #{count_likes(diet['Diet_ID'])}
+      - if check_like(session[:user_id], diet['Diet_ID'])
+        form(action="/diets/#{diet['Diet_ID']}/unlike" method="post")
+          button(type="submit") Unlike
+      - else
+        form(action="/diets/#{diet['Diet_ID']}/like" method="post")
+          button(type="submit") Like
