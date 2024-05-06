@@ -9,27 +9,40 @@ require_relative 'models.rb'
 enable :sessions
 include Models
 
+# Initialize database connection
 $db = SQLite3::Database.new('db/ovning_urval.db')
 $db.results_as_hash = true
 
+# Check if user is logged in
+#
+# @return [Boolean] True if user is logged in, false otherwise
 def logged_in?
   !session[:user_id].nil?
 end
 
 helpers do
+  # Check if the current user is an admin
+  #
+  # @return [Boolean] True if user is an admin, false otherwise
   def admin_logged_in?
     logged_in? && user_is_admin?(session[:user_id])
   end
 
+  # Count likes for a specific diet
+  #
+  # @param [Integer] diet_id ID of the diet
+  # @return [Integer] Number of likes
   def count_likes(diet_id)
     Models.count_likes(diet_id)
   end
 
+  # Redirect to login page if user is not logged in
   def require_login!
     redirect '/register' unless logged_in?
   end
 end
 
+# Middleware for routes requiring user login
 before do
   pass if ['/', '/register', '/login', '/create_user'].include?(request.path_info)
   if session[:user_id].nil?
@@ -44,6 +57,7 @@ before do
   end
 end
 
+# Middleware for routes requiring admin privileges
 before ['/admin/*'] do
   unless admin_logged_in?
     session[:error] = "You must be an admin to access this page."
@@ -51,10 +65,12 @@ before ['/admin/*'] do
   end
 end
 
+# Middleware for routes related to plans and diets that require login
 before ['/plans/*', '/diets/*'] do
   require_login!
 end
 
+# Route to handle plan and diet modification authorization
 before ['/diet/:id/update', '/diet/:id/delete'] do
   diet = get_diet(params[:id])
   unless session[:user_id] == diet['UserID']
@@ -63,61 +79,87 @@ before ['/diet/:id/update', '/diet/:id/delete'] do
   end
 end
 
+# Display the home page
+#
+# @see Model#get_user_plan
 get '/' do
   slim(:'home/home', locals: { logged_in: logged_in? })
 end
 
+# Display the home page (alternative route)
+#
+# @see Model#get_user_plan
 get '/home' do
   puts "Current user ID in session: #{session[:user_id]}"
   slim(:'home/home', locals: { logged_in: logged_in? })
 end
 
-get '/register' do 
-  # Pass remaining_seconds to the register page if a cooldown is active
+# Display the registration page, potentially with cooldown timing
+#
+# @see Model#register_user
+get '/register' do
   remaining_seconds = session[:cooldown] && Time.now < session[:cooldown] ? (session[:cooldown] - Time.now).ceil : nil
   slim(:'register/register', locals: { logged_in: logged_in?, remaining_seconds: remaining_seconds })
 end
 
-get '/logout' do 
+# Logout the current user and redirect to home
+#
+get '/logout' do
   session.clear
   redirect '/home'
 end
 
+# Display admin panel
+#
+# @see Model#get_users
 get '/admin' do
-  users = get_users 
+  users = get_users
   slim(:'admin/index', locals: { users: users })
 end
 
+# Display admin edit page
+#
+# @see Model#get_users
 get '/admin/edit' do
-  users = get_users 
+  users = get_users
   slim(:'admin/edit', locals: { users: users })
 end
 
+# Display all diets
+#
+# @see Model#get_diets
 get '/diets' do
   diets = get_diets
   slim(:'diets/index', locals: { logged_in: logged_in?, diets: diets})
 end
 
-get '/diets/new' do 
+# Display new diet form
+#
+# @see Model#get_diets
+get '/diets/new' do
   diets = get_diets
   slim(:'diets/new', locals: {logged_in: logged_in?, diets: diets})
-end 
+end
 
-get '/diets/index' do 
-  diets = get_diets
-  slim(:'diets/index', locals: {logged_in: logged_in?, diets: diets})
-end 
-
-get '/diets/show' do 
+# Display diet details
+#
+# @see Model#get_diets
+get '/diets/show' do
   diets = get_diets
   slim(:'diets/show', locals: {logged_in: logged_in?, diets: diets})
-end 
+end
 
-get '/diets/:id/edit' do 
+# Display diet edit form
+#
+# @see Model#get_diet
+get '/diets/:id/edit' do
   diet = get_diet(params[:id])
   slim(:'diets/edit', locals: {logged_in: logged_in?, diet: diet})
 end
 
+# Display plan edit form
+#
+# @see Model#get_user_plan_by_id
 get '/plans/:id/edit' do
   require_login!
   plan = get_user_plan_by_id(params[:id])
@@ -129,31 +171,45 @@ get '/plans/:id/edit' do
   end
 end
 
+# Display plans index
+#
+# @see Model#get_user_plan
 get '/plans' do
   user_id = session[:user_id]
   plan = get_user_plan(user_id)
   slim(:'plans/index', locals: { logged_in: logged_in?, plan: plan })
 end
 
-
-get '/plans/show' do 
+# Display plans show
+#
+# @see Model#get_user_plan
+get '/plans/show' do
   user_id = session[:user_id]
   plans = get_user_plan(user_id)
   slim(:'plans/show', locals: { logged_in: logged_in?, plans: plans })
 end
 
-get '/plans/index' do 
+# Display plans index
+#
+# @see Model#get_user_plan
+get '/plans/index' do
   user_id = session[:user_id]
   plans = get_user_plan(user_id)
   slim(:'plans/index', locals: { logged_in: logged_in?, plans: plans })
 end
 
-get '/plans/new' do 
+# Display new plan form
+#
+# @see Model#get_user_plan
+get '/plans/new' do
   user_id = session[:user_id]
   plans = get_user_plan(user_id)
   slim(:'plans/new', locals: { logged_in: logged_in?, plans: plans })
 end
 
+# Process login
+#
+# @see Model#get_results
 post '/login' do
   username = params[:username]
   password = params[:password]
@@ -185,6 +241,9 @@ post '/login' do
   end
 end
 
+# Process user creation
+#
+# @see Model#get_register_form
 post "/create_user" do
   username = params[:username]
   password = params[:password]
@@ -200,6 +259,9 @@ post "/create_user" do
   end
 end
 
+# Process plan creation
+#
+# @see Model#save_plans
 post '/plans' do
   require_login!
   monday = params[:monday_input]
@@ -213,6 +275,9 @@ post '/plans' do
   redirect '/plans/show'
 end
 
+# Process plan update
+#
+# @see Model#update_plan
 post '/plans/:id/update' do
   require_login!
   plan = get_user_plan_by_id(params[:id])
@@ -226,6 +291,9 @@ post '/plans/:id/update' do
   end
 end
 
+# Process diet creation
+#
+# @see Model#save_diet
 post '/diet' do
   require_login!
   diet_name = params[:diet_name_input]
@@ -233,16 +301,22 @@ post '/diet' do
   name = params[:name_input]
   user_id = session[:user_id]
   save_diet(diet_name, diet_info, user_id, name)
-  redirect '/diets/index'
+  redirect '/diets/show'
 end
 
+# Process diet deletion
+#
+# @see Model#delete_diet
 post '/diet/:id/delete' do
   require_login!
   diet_id = params[:id]
   delete_diet(diet_id)
-  redirect '/diets'
+  redirect '/diets/show'
 end
 
+# Process diet update
+#
+# @see Model#update_diet
 post '/diet/:id/update' do
   diet_id = params[:id]
   diet_name = params[:diet_name_input]
@@ -252,6 +326,9 @@ post '/diet/:id/update' do
   redirect '/diets/show'
 end
 
+# Process user deletion
+#
+# @see Model#delet_user
 post '/user/:id/delete' do
   if admin_logged_in?
     user_id = params[:id]
@@ -262,6 +339,9 @@ post '/user/:id/delete' do
   end
 end
 
+# Process diet liking
+#
+# @see Model#like_diet
 post '/diets/:id/like' do
   require_login!
   unless check_like(session[:user_id], params[:id])
@@ -270,6 +350,9 @@ post '/diets/:id/like' do
   redirect back
 end
 
+# Process unliking a diet
+#
+# @see Model#unlike_diet
 post '/diets/:id/unlike' do
   require_login!
   if check_like(session[:user_id], params[:id])
@@ -278,6 +361,9 @@ post '/diets/:id/unlike' do
   redirect back
 end
 
+# Process user update
+#
+# @see Model#update_user
 post '/user/:id/update' do
   if admin_logged_in?
     user_id = params[:id]
