@@ -249,15 +249,18 @@ post "/create_user" do
   password = params[:password]
   email = params[:email]
   password_confirm = params[:password_confirm]
-  if password == password_confirm
+
+  if password != password_confirm
+    flash[:error] = "Passwords do not match."
+    redirect back
+  else
     password_digest = BCrypt::Password.create(password)
     get_register_form(username, password_digest, email)
     session[:name] = username
     redirect('/home')
-  else
-    slim(:'register/register', locals: { error_message: "Passwords do not match", logged_in: logged_in? })
   end
 end
+
 
 # Process plan creation
 #
