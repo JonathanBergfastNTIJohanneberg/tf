@@ -273,12 +273,13 @@ post '/diets/:id/like' do
 end
 
 post '/diets/:id/unlike' do
-  require_login!!
+  require_login!
   if check_like(session[:user_id], params[:id])
     unlike_diet(session[:user_id], params[:id])
   end
   redirect back
 end
+
 
 post '/user/:id/update' do
   if admin_logged_in?
