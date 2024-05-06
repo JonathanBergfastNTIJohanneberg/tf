@@ -21,6 +21,10 @@ helpers do
     logged_in? && user_is_admin?(session[:user_id])
   end
 
+  def count_likes(diet_id)
+    Models.count_likes(diet_id)
+  end
+
   def require_login!
     redirect '/register' unless logged_in?
   end

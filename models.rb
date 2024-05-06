@@ -46,7 +46,7 @@ module Models
         !result.empty?
     end
     
-    def count_likes(diet_id)
+    def self.count_likes(diet_id)
         db = connect_to_db
         result = db.execute("SELECT COUNT(UserID) as count FROM UserLikedDiets WHERE DietID = ?", [diet_id])
         result.first['count'] || 0
