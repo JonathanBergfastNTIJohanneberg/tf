@@ -1,21 +1,17 @@
 document.addEventListener("DOMContentLoaded", function() {
-  // Function to toggle dropdown content
   const toggleDropdown = function(dropdownButton) {
     const dropdownContent = dropdownButton.nextElementSibling;
     const isActive = dropdownContent.classList.contains("active");
     dropdownContent.classList.toggle("active", !isActive);
   };
 
-  // Event listener for dropdown buttons
   const dropdownButtons = document.querySelectorAll(".btn");
   dropdownButtons.forEach(function(dropdownButton) {
     dropdownButton.addEventListener("click", function(event) {
       toggleDropdown(this);
-      event.stopPropagation(); // Prevent event from bubbling up to document
+      event.stopPropagation();
     });
   });
-
-  // Event listener to close dropdowns when clicking outside
   document.addEventListener("click", function(event) {
     dropdownButtons.forEach(function(dropdownButton) {
       const dropdownContent = dropdownButton.nextElementSibling;
@@ -25,7 +21,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
-  // Event listener for password confirmation
   const passwordInput = document.querySelector('input[name="password"]');
   const confirmPasswordInput = document.querySelector('input[name="password_confirm"]');
   const errorMessage = document.querySelector('.error-message');

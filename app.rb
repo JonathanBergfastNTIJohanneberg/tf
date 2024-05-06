@@ -121,8 +121,6 @@ end
 get '/plans/:id/edit' do
   require_login!
   plan = get_user_plan_by_id(params[:id])
-  
-  # Check if the plan belongs to the logged-in user
   if plan && session[:user_id] == plan['UserID']
     slim(:'plans/edit', locals: { plan: plan, logged_in: logged_in? })
   else
@@ -134,9 +132,9 @@ end
 get '/plans' do
   user_id = session[:user_id]
   plan = get_user_plan(user_id)
-  p plan 
   slim(:'plans/index', locals: { logged_in: logged_in?, plan: plan })
 end
+
 
 get '/plans/show' do 
   user_id = session[:user_id]
