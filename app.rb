@@ -40,7 +40,6 @@ before do
   end
 end
 
-
 before ['/admin/*'] do
   unless admin_logged_in?
     session[:error] = "You must be an admin to access this page."
@@ -74,7 +73,6 @@ get '/register' do
   remaining_seconds = session[:cooldown] && Time.now < session[:cooldown] ? (session[:cooldown] - Time.now).ceil : nil
   slim(:'register/register', locals: { logged_in: logged_in?, remaining_seconds: remaining_seconds })
 end
-
 
 get '/logout' do 
   session.clear
@@ -116,7 +114,6 @@ get '/diets/:id/edit' do
   slim(:'diets/edit', locals: {logged_in: logged_in?, diet: diet})
 end
 
-# GET route to fetch a specific plan for editing
 get '/plans/:id/edit' do
   require_login!
   plan = get_user_plan_by_id(params[:id])
@@ -129,7 +126,6 @@ get '/plans/:id/edit' do
     redirect '/plans'
   end
 end
-
 
 get '/plans' do
   user_id = session[:user_id]
@@ -215,7 +211,6 @@ post '/plans' do
   redirect '/plans/show'
 end
 
-# POST route to update a specific plan
 post '/plans/:id/update' do
   require_login!
   plan = get_user_plan_by_id(params[:id])
@@ -228,7 +223,6 @@ post '/plans/:id/update' do
     redirect '/plans'
   end
 end
-
 
 post '/diet' do
   require_login!
