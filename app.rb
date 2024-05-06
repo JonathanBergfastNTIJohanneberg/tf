@@ -280,7 +280,6 @@ post '/diets/:id/unlike' do
   redirect back
 end
 
-
 post '/user/:id/update' do
   if admin_logged_in?
     user_id = params[:id]

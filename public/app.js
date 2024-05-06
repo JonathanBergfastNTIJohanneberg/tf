@@ -1,8 +1,4 @@
 document.addEventListener("DOMContentLoaded", function() {
-  const body = document.querySelector('body');
-  const loggedIn = body.dataset.loggedIn === "true"; // Convert the attribute value to a boolean
-
-  
   // Function to toggle dropdown content
   const toggleDropdown = function(dropdownButton) {
     const dropdownContent = dropdownButton.nextElementSibling;
