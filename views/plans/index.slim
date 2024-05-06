@@ -10,7 +10,8 @@ html lang="en"
 
   body.planner-body data-logged-in="#{logged_in}"
     a href="/plans/show" Show plans
-    a href="/plans/new" Create a plan
+    - if plan.nil?
+      a href="/plans/new" Create a plan
     - if plan
       a href="/plans/#{plan['ID']}/edit" Update Plan
     - else
